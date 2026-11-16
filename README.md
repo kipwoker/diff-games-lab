@@ -12,9 +12,9 @@
 in support-function form. The rest of this page describes that track — its theory, its engine,
 its five examples and its viewer.
 
-Given `ẋ = A x + B u + C v` with compact convex control sets `P` and `Q`, a polyhedral target
-`π x(T) ∈ M`, and a partition of `[0,T]`, the solver prints the alternating-sum approximations
-`W^k` of the bridge as a sequence of polyhedral shells. Convex sets are never carried as vertex
+Given $\dot{x} = A x + B u + C v$ with compact convex control sets `P` and `Q`, a polyhedral target
+$\pi x(T) \in M$, and a partition of `[0,T]`, the solver prints the alternating-sum approximations
+$W^k$ of the bridge as a sequence of polyhedral shells. Convex sets are never carried as vertex
 lists: they are 110 support values over a fixed direction grid, and the geometric difference is
 performed entirely in dual space.
 
@@ -25,8 +25,8 @@ its way of looking at the answer. Only the first is built out.
 
 | track | question | state |
 |---|---|---|
-| **1. Linear bridges, support functions** | the maximal stable bridge of `ẋ = Ax + Bu + Cv`, carried as support values over 110 directions | implemented — this repository |
-| **2. Non-linear games** | which of those steps survive when `ẋ = f(x, u, v)` | case, grid reference, and a measured step wall; no engine code |
+| **1. Linear bridges, support functions** | the maximal stable bridge of $\dot{x} = Ax + Bu + Cv$, carried as support values over 110 directions | implemented — this repository |
+| **2. Non-linear games** | which of those steps survive when $\dot{x} = f(x, u, v)$ | case, grid reference, and a measured step wall; no engine code |
 | **3. Alternative constructions** | the same bridge by other means, and whether the answers agree | planned |
 | **4. Winning strategies** | realising the bridge as a positional strategy, and testing it | certificate built — `--certify`, two of five cases fail |
 | **5. Unstable parameters** | the same bridge when the drift is known only up to `ΔA` | planned |
@@ -97,7 +97,7 @@ cargo run --release --bin bridge_server
 |---|---|
 | [The game and the stable bridge](docs/01-game-and-bridge.md) | dynamics, strategies, the stability property, and the reverse-time transform that fixes the terminal instant |
 | [Convex sets through their support functions](docs/02-support-functions.md) | support functions, Minkowski sum, geometric difference, and the `co` reconstruction that makes a direction grid usable |
-| [Discretization](docs/03-discretization.md) | the partition, the interval map `A_k`, the recurrence `W^k = (W^{k−1} ⊖ Q_k) ⊕ P_k`, the capture test |
+| [Discretization](docs/03-discretization.md) | the partition, the interval map $A_k$, the recurrence $W^k = (W^{k-1} \ominus Q_k) \oplus P_k$, the capture test |
 | [The algorithm as implemented](docs/04-algorithm.md) | the 110 directions, vertex enumeration, the dual update stage by stage, constants, module map |
 | [The time step: interval map and refinement](docs/05-time-step.md) | how a step splits into 110 pieces, why that is the right refinement, where the error goes |
 | [Results](docs/06-results.md) | the five examples, measured extents, mesh consistency, the grid's accuracy floor |
@@ -111,11 +111,11 @@ Last-block extents of the five tracked runs:
 
 | case | control sizes | blocks | vertices | extent |
 |---|---|---|---|---|
-| 1, diamonds | `α = 2` vs `β = 1` | 20 | 498 | x ±3.000, y ±2.931 |
-| 2a, squares | `α = 2, β = 1` | 8 | 504 | x ±0.980, y ±0.926 |
-| 2b, squares | `α = 2, β = 2` | 8 | 168 | x ±0.500, y ±0.514 |
-| 2c, squares | `α = 1, β = 2` | 8 | 333 | x −0.030…0.026, y ±0.100 |
-| 3d, cubes | `α = 2` vs `β = 1` | 4 | 186 | x ±1.500, y ±1.500, z ±1.987 |
+| 1, diamonds | $\alpha = 2$ vs $\beta = 1$ | 20 | 498 | x ±3.000, y ±2.931 |
+| 2a, squares | $\alpha = 2, \beta = 1$ | 8 | 504 | x ±0.980, y ±0.926 |
+| 2b, squares | $\alpha = 2, \beta = 2$ | 8 | 168 | x ±0.500, y ±0.514 |
+| 2c, squares | $\alpha = 1, \beta = 2$ | 8 | 333 | x −0.030…0.026, y ±0.100 |
+| 3d, cubes | $\alpha = 2$ vs $\beta = 1$ | 4 | 186 | x ±1.500, y ±1.500, z ±1.987 |
 
 The pattern is the game's: equal control authority cancels in the recurrence, so the bridge is
 the target for all time; more authority for the first player grows it, less shrinks it. The

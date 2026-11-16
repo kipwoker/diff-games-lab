@@ -16,12 +16,12 @@ the asset as the bands.
 
 ## 1. The construction
 
-For a table `ψ_1 … ψ_m` with supports `h_i = h(ψ_i)`:
+For a table $\psi_1 \dots \psi_m$ with supports $h_i = h(\psi_i)$:
 
-- outer: `O = {x : ⟨ψ_i, x⟩ ≤ h_i}`;
-- inner: `I = {x : ⟨ψ_i, x⟩ ≤ h_i − e_i}`, `e_i = h_i tan ρ_i + R(1/cos ρ_i − 1)`;
-- `ρ_i` the covering radius of the cell of `ψ_i`, `R` the body's circumradius;
-- band `= max_ψ (h_O(ψ) − h_I(ψ)) / 2R`.
+- outer: $O = \{x : \langle \psi_i, x\rangle \le h_i\}$;
+- inner: $I = \{x : \langle \psi_i, x\rangle \le h_i - e_i\}$, $e_i = h_i \tan \rho_i + R(1/\cos \rho_i - 1)$;
+- $\rho_i$ the covering radius of the cell of $\psi_i$, `R` the body's circumradius;
+- band $= \max_\psi (h_O(\psi) - h_I(\psi)) / 2R$.
 
 The two sides differ in kind: `O` is what a support-function reconstruction gives for free, `I` is the
 part that requires measuring whether the shift is inside the body. It is, on 24 of 24 probes across

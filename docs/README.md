@@ -23,8 +23,8 @@ planned.
 2. [Convex sets through their support functions](02-support-functions.md) — support functions,
    Minkowski sums, the geometric difference, and the dual reconstruction `co` that makes a
    finite direction grid usable.
-3. [Discretization](03-discretization.md) — the partition, the interval map `A_k`, the
-   recurrence `W^k = (W^{k−1} ⊖ Q_k) ⊕ P_k`, and the capture-time test.
+3. [Discretization](03-discretization.md) — the partition, the interval map $A_k$, the
+   recurrence $W^k = (W^{k-1} \ominus Q_k) \oplus P_k$, and the capture-time test.
 4. [The algorithm as implemented](04-algorithm.md) — the 110 directions, the vertex
    enumeration, the dual update stage by stage, the tolerances, and the module map.
 5. [The time step: interval map and refinement](05-time-step.md) — how a step is split into 110
@@ -41,16 +41,16 @@ results against the literature, and [the note](09-note.md) is the write-up of re
 | Symbol | Meaning |
 |---|---|
 | `n` | state dimension (2 or 3) |
-| `A, B, C` | dynamics matrices, `ẋ = Ax + Bu + Cv` |
+| `A, B, C` | dynamics matrices, $\dot{x} = Ax + Bu + Cv$ |
 | `P, Q` | control constraint of the first player, of the second; compact convex |
-| `M`, `π` | terminal set `πx(T) ∈ M`; `M` is a polyhedron, `π` a projection |
+| `M`, `π` | terminal set $\pi x(T) \in M$; `M` is a polyhedron, `π` a projection |
 | `T`, `Step` | horizon and one interval of the partition |
-| `ψ_i`, `m` | sampled direction `i` of `m = 110`, and their count |
-| `c(X, ψ)` | support function `sup_{x∈X}⟨x, ψ⟩` |
-| `X₁ ⊕ X₂`, `X₁ ⊖ X₂` | Minkowski sum, geometric (Pontryagin) difference |
+| $\psi_i$, `m` | sampled direction `i` of `m = 110`, and their count |
+| $c(X, \psi)$ | support function $\sup_{x\in X}\langle x, \psi \rangle$ |
+| $X_{1} \oplus X_{2}$, $X_{1} \ominus X_{2}$ | Minkowski sum, geometric (Pontryagin) difference |
 | `co(f)` | the sublinear envelope of sampled support values; support of the half-space intersection |
-| `W^k`, `W` | the `k`-th alternating sum, and its limit — the maximal stable bridge |
-| `A_k` | the flow-and-integral map of the `k`-th interval counted back from `T` |
+| $W^k$, `W` | the `k`-th alternating sum, and its limit — the maximal stable bridge |
+| $A_k$ | the flow-and-integral map of the `k`-th interval counted back from `T` |
 
-Vectors are columns; `⟨·,·⟩` is the Euclidean inner product; `e^{tA}` is the matrix
+Vectors are columns; $\langle \cdot,\cdot \rangle$ is the Euclidean inner product; $e^{tA}$ is the matrix
 exponential. Everything is `double` in the code.

@@ -7,13 +7,13 @@ discretization entirely, while the square cases keep the drift and the grid.
 
 ## 1. The problems
 
-**Example 1 — diamonds, no drift.** `A = 0`, `B = C = π = I`, target `|x₁| + |x₂| ≤ 1`, first
-player's control set `|u₁| + |u₂| ≤ 2`, second player's `|v₁| + |v₂| ≤ 1`, `T = 2`, `Step = 0.1`.
+**Example 1 — diamonds, no drift.** `A = 0`, $B = C = \pi = I$, target $|x_{1}| + |x_{2}| \le 1$, first
+player's control set $|u_{1}| + |u_{2}| \le 2$, second player's $|v_{1}| + |v_{2}| \le 1$, `T = 2`, `Step = 0.1`.
 No drift means every flow factor is the identity, so the interval map is exact and only the
 direction grid remains.
 
-**Examples 2a–2c — squares, with drift.** `A = [[0,0],[1,0]]`, `B = C = π = I`, target
-`|x_i| ≤ 0.5`, `T = 0.4`, `Step = 0.05`, with `P` a square of radius `α` and `Q` a square of
+**Examples 2a–2c — squares, with drift.** `A = [[0,0],[1,0]]`, $B = C = \pi = I$, target
+$|x_i| \le 0.5$, `T = 0.4`, `Step = 0.05`, with `P` a square of radius `α` and `Q` a square of
 radius `β`:
 
 | case | α | β | what should happen |
@@ -23,7 +23,7 @@ radius `β`:
 | 2c | 1 | 2 | the bridge shrinks |
 
 **Example 3d — cubes, no drift.** The same construction in three dimensions: `A = 0`,
-`B = C = π = I`, target `|x_i| ≤ 0.5`, `P` a cube of radius 2, `Q` a cube of radius 1,
+$B = C = \pi = I$, target $|x_i| \le 0.5$, `P` a cube of radius 2, `Q` a cube of radius 1,
 `T = 1`, `Step = 0.25`.
 
 All five are in [`examples/`](../examples/), and every output is in
@@ -62,7 +62,7 @@ Three things to read out of the table:
 ## 3. Mesh consistency
 
 Example 2a is the useful convergence check. Halving `Step` from `0.05` to `0.025` and again to
-`0.0125` at fixed `T` leaves `x = ±0.980` unchanged: the value is the scheme's limit for this
+`0.0125` at fixed `T` leaves $x = \pm 0.980$ unchanged: the value is the scheme's limit for this
 grid, not a mesh artifact. That is what an alternating sum should do — refine the partition and
 the answer stops moving once the remaining error is the direction grid's.
 
@@ -75,12 +75,12 @@ slightly different number in a table.
 Example 3d is the three-dimensional case, and it shows the floor of the method. The 110
 directions sit on 10 elevation rings, so the nearest sample is 18° from the `z` poles. Nothing
 bounds a shell along that axis: `z` comes out `1.325×` wider than the cube it is meant to be,
-`±1.987` against `±1.500` in the last block, and the factor is the same in the earlier blocks
+$\pm 1.987$ against $\pm 1.500$ in the last block, and the factor is the same in the earlier blocks
 because the support values all scale together. `x` and `y` stay exactly at `0.5 + t`, since their
 facet normals are in the table.
 
 `engine/tests/pipeline.rs` carries the degenerate `P = Q` version of the same construction. With
-nothing moving, the printed polytope still reaches `z = ±0.668` for a cube of half-width 0.5, and
+nothing moving, the printed polytope still reaches $z = \pm 0.668$ for a cube of half-width 0.5, and
 the support values stay within `9.5e-2` of the cube's exact support function without growing
 with the block index. That residual and the `1.325` factor belong to the direction grid, not to
 the time step.

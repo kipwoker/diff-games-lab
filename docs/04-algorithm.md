@@ -29,12 +29,12 @@ values. The directions are fixed at compile time (`m = 110`).
 **2D.** Uniform in angle:
 
 $$
-\psi_i = \bigl(\cos \theta_i, \sin \theta_i\bigr), \qquad \theta_i = \frac{2\pi i}{110},
+\psi_i = (\cos \theta_i, \sin \theta_i), \qquad \theta_i = \frac{2\pi i}{110},
 \qquad i = 0,\dots,109 .
 $$
 
 **3D.** A latitude/longitude grid with 11 azimuths and 10 elevation levels,
-`m = 10·11 = 110`:
+$m = 10\cdot 11 = 110$:
 
 $$
 x = \cos\gamma_i \cos\theta_j,\quad
@@ -47,7 +47,7 @@ $$
 \theta_j = \frac{2\pi j}{10}\ (j = 0..9).
 $$
 
-The first two components are scaled by `cos θ_j` and the third is `sin θ_j`, so the 10
+The first two components are scaled by $\cos \theta_j$ and the third is $\sin \theta_j$, so the 10
 elevation levels fix `z` and the 11 azimuths sweep the equator. A direction table exists for
 these two dimensions only; anything else is a `SetupError`.
 
@@ -57,22 +57,22 @@ nothing caps a shell along that axis (see [results](06-results.md)).
 
 ## 3. Stage 2 — the terminal support vector
 
-`M` arrives as inequalities `⟨a_j, x⟩ ≤ b_j`. Two things have to happen: the set has to be
+`M` arrives as inequalities $\langle a_j, x\rangle \le b_j$. Two things have to happen: the set has to be
 turned into vertices, and the vertices into 110 support values.
 
-**Boundedness guard.** For every direction, compute `max_j ⟨a_j, ψ_i⟩` and then the minimum
+**Boundedness guard.** For every direction, compute $\max_j \langle a_j, \psi_i\rangle$ and then the minimum
 over `i`; the polyhedron is accepted only if that minimum is positive. Geometrically: a
 polyhedron is bounded iff no nonzero direction is non-positive against every normal, and the
 check samples that condition. It is sufficient, not necessary — a bounded `M` can be rejected —
-and it is evaluated on the 110 directions rather than all of `ℝⁿ`.
+and it is evaluated on the 110 directions rather than all of $\mathbb{R}^{n}$.
 
-**Vertices.** Every `C(m_rows, n)` combination of `n` rows is solved as an `n×n` linear system
+**Vertices.** Every $C(m_{\text{rows}}, n)$ combination of `n` rows is solved as an $n\times n$ linear system
 by Gaussian elimination with partial pivoting. A candidate is accepted when it satisfies all the
 other rows within the `0.01` slack, and duplicates are rejected with the same slack. The
-vertices of `{x : Ax ≤ b}` are exactly the feasible solutions of its `n×n` subsystems, so the
+vertices of $\{x : Ax \le b\}$ are exactly the feasible solutions of its $n\times n$ subsystems, so the
 enumeration is complete up to the slack.
 
-**Supports.** `c(M, ψ_i) = max` over the accepted vertices of `⟨ψ_i, v⟩`.
+**Supports.** $c(M, \psi_i) = \max$ over the accepted vertices of $\langle \psi_i, v\rangle$.
 
 The `0.01` slack is four orders of magnitude coarser than double precision and is the dominant
 numerical artefact of the method: it admits near-duplicate vertices, and it is why an output
@@ -84,21 +84,21 @@ bug — see the constants table below.
 Per block the driver applies the interval map and the recurrence of chapter 3 in dual space.
 The stages, in the order the code runs them:
 
-1. **Flow and integral.** `E = e^{Ah}` and `Φ_h = ∫₀^{h} e^{sA}ds`, both by a truncated power
-   series (`A^k h^k / k!`, accumulated with integer factorials) that stops when the largest
+1. **Flow and integral.** $E = e^{Ah}$ and $\Phi_h = \int_{0}^{h} e^{sA}ds$, both by a truncated power
+   series ($A^k h^k / k!$, accumulated with integer factorials) that stops when the largest
    entry of the new term is at most `1e-5`.
-2. **The interval map.** `G = π·Φ_h·E`, the flow from the interval to the terminal instant
+2. **The interval map.** $G = \pi \cdot \Phi_h\cdot E$, the flow from the interval to the terminal instant
    times the integral over the interval (chapter 3 §1).
-3. **Pushing the directions through.** `GB = G·B` and `GC = G·C`, and `GB` is negated as a
+3. **Pushing the directions through.** $GB = G\cdot B$ and $GC = G\cdot C$, and `GB` is negated as a
    whole. Negating the matrix flips the sign of every support value of `P` at once; that is the
-   minus in `c(P_k) − c(Q_k)`, applied structurally rather than per term.
-4. **The two support images.** `c_P = c(P, (GB)^{T}Ψ)` and `c_Q = c(Q, (GC)^{T}Ψ)` — stage 2's
+   minus in $c(P_k) - c(Q_k)$, applied structurally rather than per term.
+4. **The two support images.** $c_P = c(P, (GB)^{T}\Psi)$ and $c_Q = c(Q, (GC)^{T}\Psi)$ — stage 2's
    enumeration again, on the transformed directions.
-5. **Sum, then difference.** `Σ = c_prev + c_P`, then the dual update with `c_Q`.
+5. **Sum, then difference.** $\Sigma = c_{\text{prev}} + c_P$, then the dual update with $c_Q$.
 
 ## 5. The dual update
 
-Given `Σ` and `c_Q`, one call produces the next support vector without ever forming the
+Given `Σ` and $c_Q$, one call produces the next support vector without ever forming the
 difference set in primal space:
 
 ```
@@ -119,7 +119,7 @@ Two subtleties worth naming:
 
 * The min-ratio scan is `O(m²)` and every term needs a Gram entry. The entries are recomputed
   inside the loop rather than stored, so the summation order stays fixed.
-* `λ` can come out negative when `Σ − c_Q` is not a support function. There is no guard: the
+* `λ` can come out negative when $\Sigma - c_Q$ is not a support function. There is no guard: the
   hull step then produces a value below the sampled data, and `co` absorbs it. This is the
   numerical shadow of the outer approximation of chapter 2.
 
@@ -160,7 +160,7 @@ systems, each needing a solve plus `m` feasibility checks, per block.
 | `linear_system.rs` | Gaussian elimination with partial pivoting |
 | `combinations.rs` | `C(m,n)` enumeration order |
 | `matrix.rs` | dense matrix arithmetic |
-| `support_function.rs` | `max_v ⟨ψ, v⟩` over vertices |
+| `support_function.rs` | $\max_v \langle \psi, v\rangle$ over vertices |
 | `pontryagin_difference.rs` | the dual update of §5 |
 | `minkowski_sum.rs` | support-vector sum |
 | `stable_bridge.rs` | series, interval map, driver |
@@ -172,7 +172,7 @@ systems, each needing a solve plus `m` feasibility checks, per block.
 | Quantity | Value | Consequence |
 |---|---|---|
 | directions `m` | 110 | accuracy ceiling in every direction |
-| series tolerance | `1e-5` | `e^{Ah}` and its integral are truncated, not machine-accurate |
+| series tolerance | `1e-5` | $e^{Ah}$ and its integral are truncated, not machine-accurate |
 | dedup / feasibility slack | `0.01` | near-duplicate vertices, loose acceptance |
 | sub-steps per block | 110 | the inner refinement of chapter 5 |
 | output precision | `%.9lf` | nine decimals, fixed |

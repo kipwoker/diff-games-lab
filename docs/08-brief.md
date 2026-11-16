@@ -17,7 +17,7 @@ worse, the pair form is 2D-only).**No new theorem.** Two items were tagged as po
 
 The old inner side was the inscribed ball, because nothing said where the true body's boundary was
 between samples. Shifting every sampled half-space inward by its own allowance,
-`⟨ψ_i, x⟩ ≤ c_i − e_i`, gives an inner set that is a real polytope, not a ball.
+$\langle \psi_i, x\rangle \le c_i - e_i$, gives an inner set that is a real polytope, not a ball.
 
 | case | inscribed ball | shifted intersection | ratio |
 |---|---|---|---|
@@ -52,7 +52,7 @@ lower bound by construction.
 
 The `16 x 15` value is exactly the probe that had falsified the old radius, so the missing vertex was
 the one the sweep found. The fix also exposed a sign bug: both implementations normalise the
-circumcenter by the sign of `⟨a + b + c, n⟩`, which is `0` when that sum is orthogonal to the normal,
+circumcenter by the sign of $\langle a + b + c, n\rangle$, which is `0` when that sum is orthogonal to the normal,
 and multiplying by `0` returns the zero vector — a point equidistant from everything, read as
 `ρ = 90°` with `tan 90°` in the allowance. The test that pins it: a regular tetrahedron's cells meet
 at the antipode of the fourth sample, so `ρ = acos 1/3 = 70.5288°` against a half gap of `54.7356°`.
@@ -77,10 +77,10 @@ Seven `az × el` tables on the cube at `2525` probes:
 | `20 x 12` | 240 | 15.6672° | 0 | 0.223 |
 
 `13 x 12` is exact because twelve elevations give `0°` and `90°` and thirteen azimuths give
-`0`/`±90`, so `±e_i` are sampled and the six facet caps alone pin the cube. The sufficiency of that
+`0`/`±90`, so $\pm e_i$ are sampled and the six facet caps alone pin the cube. The sufficiency of that
 is trivial to prove; the useful part is the measurement that **density without alignment still leaves
 `1.046` at 240 directions**, while alignment alone is exact to `6e-14`. That is why `16 x 15` halves
-the band (`1.999277 → 1.307773`) and the label still reads `estimate`.
+the band ($1.999277 \to 1.307773$) and the label still reads `estimate`.
 
 **Prior art: searched, and the sufficiency is the definition.** A polytope *is* the intersection of
 its facet half-spaces, and tangent-half-space outer approximation with Hausdorff bounds is standard
@@ -91,11 +91,11 @@ constraint form). The alignment result is a benchmark, not a discovery.
 
 | question asked | answer | number | what it changed |
 |---|---|---|---|
-| is the inner gap a chamfer term? | no | `gap/tan ρ` = `0.38–1.55`, spread `4×`, rises at `254` | the repair was abandoned; a published claim was corrected |
+| is the inner gap a chamfer term? | no | $\text{gap}/\tan \rho$ = `0.38–1.55`, spread `4×`, rises at `254` | the repair was abandoned; a published claim was corrected |
 | is the triple worth charging? | no | sound, `84–89%` coverage, tight only at samples; `max` widens the band `2.3×` | band keeps the one-term form |
 | does density buy the `2%` rung? | `254` at block 1 | `205` misses all four (`2.26–2.39%`), `254` passes all four (`1.57–1.82%`) | the tolerance is a table size |
 | is adaptive better? | no | greedy table `39.38°` vs shipped `19.38°`; bisection at matched count cuts excess `4.3×` | refine within the shipped table |
-| is the 3D band shape-fixed? | no | `1.999277 → 1.307773` at `16 x 15` | shape is a parameter |
+| is the 3D band shape-fixed? | no | $1.999277 \to 1.307773$ at `16 x 15` | shape is a parameter |
 | can P1 be certified? | not yet | margin `0.150`, not `0.025`; shipped allowance `44.65%` of support at the cell radius; the adaptive table is worse at `118%` | `Step` first, then a bridge; no measured table under `13.04%` (`d`) or `4.77%` (angle), nearest `2.1×` over |
 
 The P1 row is the one that reshaped a track: the earlier `0.025` margin was a grid artefact, and with
@@ -104,7 +104,7 @@ the corrected `0.150` the table is no longer the dominant error — the missing 
 ## 5. Engineering improvements
 
 - `tools/exact_polygon.py` — generalised from one hard-coded case to any case file: reads
-  `M/P/Q`, `A/B/C/pi`, `time`, `step`; applies `W ← (W + BᵀGᵀP) − (CᵀGᵀQ)` with `G = π·Ie·E`;
+  `M/P/Q`, `A/B/C/pi`, `time`, `step`; applies `W ← (W + BᵀGᵀP) − (CᵀGᵀQ)` with $G = \pi \cdot \mathrm{Ie}\cdot E$;
   `expm`/`integral_expm` by series; reproduces committed extents to `2.0e-10`, `2.0e-12` and exactly.
   Vectorised `clip` plus `1e-9` pruning made `2a` tractable at `1764` facets (~`97 s` of a `100 s`
   run); `simplify` keeps the rest at four vertices.
@@ -127,7 +127,7 @@ applied to a support function. Nothing here is a theorem: the two candidates (ti
 collapsed to textbook identities in the search, which is why the usable asset is the measurement
 record rather than a novelty claim (the `Decisions` table makes prior art a condition of being a
 publication candidate). Everything is
-polytopes and a cube; nothing transfers to the nonlinear `ẋ = f(x, u, v)` world yet.
+polytopes and a cube; nothing transfers to the nonlinear $\dot{x} = f(x, u, v)$ world yet.
 
 ## 7. What to do next
 

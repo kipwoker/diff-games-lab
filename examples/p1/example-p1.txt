@@ -1,0 +1,39 @@
+# P1 case — turn-limited pursuer against a point evader.
+#
+# DEGENERATE: a grid reference shows the bridge of this game is its capture disc, because a
+# point evader escapes by holding a circle the pursuer's turning radius cannot follow. See
+# kb/entries/02-p1-bridge-is-the-capture-set.md. Kept as the record of the first P1 case and
+# of the numbers a redefined case reuses; it should not be turned into engine code as it
+# stands.
+#
+# SPECIFICATION, NOT YET AN ENGINE INPUT: `nonlinear` is a proposed grammar block and the
+# parser rejects it until track 2 lands (kb/proposals/02-nonlinear-games.md, E1). Nothing in
+# the engine reads this file, and nothing in examples/out/ was produced from it.
+#
+# State (x, y, theta): the evader's position relative to the pursuer in metres, and the
+# pursuer's heading in radians from +x. The pursuer moves at v_p along its heading and turns
+# at |u| <= omega. The evader is a point moving in any direction at speed <= v_e, so it turns
+# freely: this is the homicidal-chauffeur ordering, not two unicycles. Two headings would make
+# the state 4D, and the direction table exists only for 2D and 3D.
+#
+# Dynamics
+#   x_dot     = v_e cos(phi) - v_p cos(theta)
+#   y_dot     = v_e sin(phi) - v_p sin(theta)
+#   theta_dot = u,   |u| <= omega
+# Capture when x^2 + y^2 <= r^2 at t = T.
+
+dimension 3
+
+nonlinear unicycle-pursuit
+  speed_pursuer    1.0   # m/s
+  speed_evader     0.7   # m/s
+  turn_rate        1.0   # rad/s
+  scale_theta      1.0   # m per rad, equal to the turning radius v_p / omega
+  capture_radius   0.1   # m
+  horizon          4.0   # s
+  step             0.1   # s, 40 blocks
+
+# Reference-solution grid for the first run (track 2, E2): 101 x 101 x 72 cells.
+grid x     -2.0  2.0  101
+grid y     -2.0  2.0  101
+grid theta  0.0  6.283185307179586  72

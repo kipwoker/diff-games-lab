@@ -1,0 +1,40 @@
+# P1 case B — two turn-limited vehicles, in the relative frame.
+#
+# REDEFINED CASE: the evader turns at 0.5 rad/s, half the pursuer's rate, so it cannot hold a
+# circle the pursuer's turning radius cannot follow. The point-evader case is
+# `example-p1.txt`, kept as the record of why this one exists
+# (kb/entries/02-p1-bridge-is-the-capture-set.md).
+#
+# SPECIFICATION, NOT YET AN ENGINE INPUT: `nonlinear` is a proposed grammar block and the
+# parser rejects it until track 2 lands (kb/proposals/02-nonlinear-games.md, E1).
+#
+# State (d, psi_p, psi_e), all relative to the line of sight:
+#   d      distance between the vehicles, metres
+#   psi_p  pursuer heading minus the LOS angle, radians
+#   psi_e  evader heading minus the LOS angle, radians
+#
+# Dynamics
+#   d_dot     = v_e cos(psi_e) - v_p cos(psi_p)
+#   los_dot   = (v_e sin(psi_e) - v_p sin(psi_p)) / d
+#   psi_p_dot = u - los_dot,   |u| <= omega_p
+#   psi_e_dot = w - los_dot,   |w| <= omega_e
+# Capture when d <= r at t = T.
+#
+# First reference: tools/p1_relative.py, grid 121 x 36 x 18, d* = 1.233 m at psi_e = 0 against
+# the 1.3 m the closure rate allows (kb/entries/02-p1-relative-interior.md).
+
+dimension 3
+
+nonlinear unicycle-pursuit
+  speed_pursuer      1.0   # m/s
+  speed_evader       0.7   # m/s
+  turn_rate_pursuer  1.0   # rad/s
+  turn_rate_evader   0.5   # rad/s
+  scale_theta        1.0   # m per rad, the pursuer's turning radius v_p / omega_p
+  capture_radius     0.1   # m
+  horizon            4.0   # s
+  step               0.1   # s, 40 blocks
+
+grid d        0.0  2.0  121
+grid psi_p    0.0  6.283185307179586  36
+grid psi_e    0.0  6.283185307179586  18

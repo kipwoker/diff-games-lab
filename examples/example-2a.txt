@@ -1,0 +1,46 @@
+# Square target, square controls, drift A = [[0, 0], [1, 0]].
+#
+# M = {|x| <= 0.5}, P = {|u| <= 2}, Q = {|v| <= 1}, B = C = pi = I,
+# T = 0.4, Step = 0.05 (8 blocks).
+#
+# P is twice Q, so the bridge grows.
+
+
+dimension 2
+
+constraints M
+   1  0  0.5
+  -1  0  0.5
+   0  1  0.5
+   0 -1  0.5
+
+matrix A
+  0 0
+  1 0
+
+matrix B
+  1 0
+  0 1
+
+matrix C
+  1 0
+  0 1
+
+matrix pi
+  1 0
+  0 1
+
+constraints P
+   1  0  2
+  -1  0  2
+   0  1  2
+   0 -1  2
+
+constraints Q
+   1  0  1
+  -1  0  1
+   0  1  1
+   0 -1  1
+
+time 0.4
+step 0.05

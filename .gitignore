@@ -1,0 +1,19 @@
+# Editor and OS noise
+.DS_Store
+Thumbs.db
+*.swp
+
+# Build products (the engine is built from source; the viewer bundle is committed)
+engine/target/
+viewer/node_modules/
+__pycache__/
+*.pyc
+
+# Engine server cache
+cache/
+engine/cache/
+
+# Saved reference pages and tool state
+external-sources/
+.codeindex/
+.freebuff/

@@ -1,0 +1,46 @@
+# Diamond target, diamond controls, no drift.
+#
+# M = {|x1| + |x2| <= 1}, P = {|u1| + |u2| <= 2}, Q = {|v1| + |v2| <= 1},
+# A = 0, B = C = pi = I, T = 2, Step = 0.1 (20 blocks).
+#
+# The first player has twice the authority, so the bridge grows.
+
+
+dimension 2
+
+constraints M
+   1  1  1
+  -1  1  1
+   1 -1  1
+  -1 -1  1
+
+matrix A
+  0 0
+  0 0
+
+matrix B
+  1 0
+  0 1
+
+matrix C
+  -1  0
+   0 -1
+
+matrix pi
+  1 0
+  0 1
+
+constraints P
+   1  1  2
+  -1  1  2
+   1 -1  2
+  -1 -1  2
+
+constraints Q
+   1  1  1
+  -1  1  1
+   1 -1  1
+  -1 -1  1
+
+time 2
+step 0.1

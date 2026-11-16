@@ -1,0 +1,45 @@
+# A problem instance in the descriptive format.
+#
+# Terminal set M: the square |x| <= 0.5. Dynamics x' = A x + B u + C v with
+# A = [[0, 0], [1, 0]] and B = C = pi = identity; P = Q is the square |.| <= 2,
+# so the two control images cancel in the recurrence.
+# Matrices end at a blank line or the next directive; row counts are implied.
+
+dimension 2
+
+constraints M
+   1  0  0.5
+  -1  0  0.5
+   0 -1  0.5
+   0  1  0.5
+
+matrix A
+  0 0
+  1 0
+
+matrix B
+  1 0
+  0 1
+
+matrix C
+  1 0
+  0 1
+
+matrix pi
+  1 0
+  0 1
+
+constraints P
+  1  0  2
+ -1  0  2
+  0 -1  2
+  0  1  2
+
+constraints Q
+  1  0  2
+ -1  0  2
+  0 -1  2
+  0  1  2
+
+time 2
+step 0.2

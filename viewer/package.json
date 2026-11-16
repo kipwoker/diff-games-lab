@@ -1,0 +1,16 @@
+{
+  "name": "diff-games-lab-viewer",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Renders Diff Games Lab output documents (one closed shell per block) for visual inspection.",
+  "scripts": {
+    "build": "esbuild src/main.js --bundle --format=iife --minify --target=es2020 --outfile=dist/app.js",
+    "dev": "esbuild src/main.js --bundle --format=iife --minify --target=es2020 --outfile=dist/app.js --servedir=.. --watch=forever",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "esbuild": "^0.28.2",
+    "three": "^0.187.0"
+  }
+}

@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="data:," />
+    <title>Diff Games Lab viewer</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #0b0f14;
+        --panel: #111923;
+        --line: #1d2833;
+        --text: #dbe6f0;
+        --muted: #7d8b9a;
+        --dim: #63707f;
+        --accent: #5ee0ff;
+        --warn: #f2c14e;
+        --error: #ef6f6f;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+      }
+      body {
+        display: flex;
+        background: var(--bg);
+        color: var(--text);
+        font: 13px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      }
+      #panel {
+        width: 300px;
+        flex: 0 0 300px;
+        padding: 16px;
+        overflow-y: auto;
+        background: var(--panel);
+        border-right: 1px solid var(--line);
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      h1 {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+      }
+      .sub {
+        margin: -10px 0 0;
+        color: var(--muted);
+        font-size: 11.5px;
+      }
+      select {
+        flex: 1 1 auto;
+        min-width: 0;
+        font: inherit;
+        color: var(--text);
+        background: #17222e;
+        border: 1px solid #2a3a4b;
+        border-radius: 6px;
+        padding: 5px 8px;
+        cursor: pointer;
+      }
+      select:hover,
+      select:focus {
+        border-color: var(--accent);
+        outline: none;
+      }
+      #drop {
+        display: block;
+        padding: 18px 12px;
+        border: 1px dashed #2c3b4b;
+        border-radius: 8px;
+        text-align: center;
+        color: var(--muted);
+        cursor: pointer;
+        transition: border-color 0.15s, color 0.15s;
+      }
+      #drop:hover,
+      #drop.over {
+        border-color: var(--accent);
+        color: var(--text);
+      }
+      #drop strong {
+        display: block;
+        color: var(--text);
+        font-weight: 600;
+        margin-bottom: 2px;
+      }
+      #file {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        align-items: center;
+      }
+      button {
+        font: inherit;
+        color: var(--text);
+        background: #17222e;
+        border: 1px solid #2a3a4b;
+        border-radius: 6px;
+        padding: 5px 10px;
+        cursor: pointer;
+      }
+      button:hover {
+        border-color: var(--accent);
+      }
+      button:disabled {
+        color: var(--dim);
+        cursor: not-allowed;
+      }
+      #record[data-active="recording"] {
+        border-color: var(--error);
+        color: var(--error);
+      }
+      #server {
+        font-size: 11.5px;
+        white-space: nowrap;
+        color: var(--muted);
+      }
+      #server::before {
+        content: "○ ";
+      }
+      #server[data-state="ok"] {
+        color: #93e6b8;
+      }
+      #server[data-state="ok"]::before {
+        content: "● ";
+      }
+      #server[data-state="off"] {
+        color: var(--warn);
+      }
+      #progress {
+        position: relative;
+        height: 8px;
+        margin: 10px 0 6px;
+        border: 1px solid #2a3a4b;
+        border-radius: 5px;
+        background: #101a24;
+        overflow: hidden;
+      }
+      #progress-fill {
+        height: 100%;
+        width: 0;
+        border-radius: 4px;
+        background: var(--accent);
+        transition: width 0.2s ease, margin-left 0.35s ease;
+      }
+      #progress[data-state="done"] #progress-fill {
+        background: #93e6b8;
+      }
+      #progress[data-state="error"] #progress-fill {
+        width: 100%;
+        background: var(--error);
+      }
+      #progress[data-state="running"] {
+        box-shadow: 0 0 0 1px rgba(94, 224, 255, 0.22) inset;
+      }
+      #progress[data-state="running"][data-indeterminate="1"] #progress-fill {
+        width: 100%;
+        background: linear-gradient(
+          90deg,
+          rgba(94, 224, 255, 0.12),
+          var(--accent),
+          rgba(94, 224, 255, 0.12)
+        );
+        background-size: 45% 100%;
+        background-repeat: no-repeat;
+        animation: sweep 1.2s linear infinite;
+      }
+      @keyframes sweep {
+        from {
+          background-position: -45% 0;
+        }
+        to {
+          background-position: 145% 0;
+        }
+      }
+      #progress-text {
+        font-size: 11.5px;
+        font-variant-numeric: tabular-nums;
+        word-break: break-word;
+      }
+      #block {
+        width: 100%;
+        accent-color: var(--accent);
+        margin: 0;
+      }
+      .ticks {
+        position: relative;
+        height: 15px;
+        margin-top: 1px;
+        color: var(--muted);
+        font-size: 10.5px;
+        font-variant-numeric: tabular-nums;
+      }
+      .ticks span {
+        position: absolute;
+        top: 0;
+        transform: translateX(-50%);
+        white-space: nowrap;
+      }
+      #block-count,
+      .key {
+        color: var(--muted);
+        font-variant-numeric: tabular-nums;
+      }
+      .split {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      fieldset {
+        margin: 0;
+        padding: 10px 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+      }
+      legend {
+        padding: 0 4px;
+        color: var(--muted);
+        font-size: 11.5px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      label.check {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        padding: 3px 0;
+        cursor: pointer;
+      }
+      label.check.nested {
+        padding-left: 22px;
+        color: var(--muted);
+      }
+      label.check input {
+        accent-color: var(--accent);
+        margin: 0;
+      }
+      #info {
+        display: grid;
+        gap: 2px;
+        font-variant-numeric: tabular-nums;
+      }
+      #info .key {
+        display: inline-block;
+        min-width: 96px;
+      }
+      #info .dim {
+        color: var(--dim);
+      }
+      #info .facet {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--muted);
+      }
+      #info .swatch {
+        flex: 0 0 auto;
+        width: 9px;
+        height: 9px;
+        border-radius: 2px;
+      }
+      #info .axes {
+        margin-top: 6px;
+        padding-top: 6px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+      }
+      #status {
+        margin-top: auto;
+        padding: 8px 10px;
+        border-radius: 6px;
+        background: #0d151d;
+        border: 1px solid var(--line);
+        font-size: 11.5px;
+        color: var(--muted);
+        word-break: break-word;
+      }
+      #status[data-level="ok"] {
+        color: #93e6b8;
+        border-color: #1f3a2c;
+      }
+      #status[data-level="warning"] {
+        color: var(--warn);
+        border-color: #40331a;
+      }
+      #status[data-level="error"] {
+        color: var(--error);
+        border-color: #46211f;
+      }
+      #hint {
+        color: var(--muted);
+        font-size: 11.5px;
+      }
+      #canvas-host {
+        position: relative;
+        flex: 1 1 auto;
+        min-width: 0;
+      }
+      canvas {
+        display: block;
+      }
+      @media (max-width: 760px) {
+        body {
+          flex-direction: column-reverse;
+        }
+        #panel {
+          width: auto;
+          flex: 0 0 auto;
+          max-height: 52vh;
+          border-right: 0;
+          border-top: 1px solid var(--line);
+        }
+        #hint {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <aside id="panel">
+      <h1>Output document</h1>
+      <p class="sub">One closed shell per block, placed on the timeline by its own metadata.</p>
+
+      <div>
+        <div class="row">
+          <label class="key" for="example">example</label>
+          <select id="example">
+            <option value="">custom — choose or drop a file</option>
+            <option value="../examples/out/example-1.out.txt">example-1 · 20 blocks</option>
+            <option value="../examples/out/example-2a.out.txt">example-2a · 8 blocks</option>
+            <option value="../examples/out/example-2b.out.txt">example-2b · 8 blocks</option>
+            <option value="../examples/out/example-2c.out.txt">example-2c · 8 blocks</option>
+            <option value="../examples/out/example-3d.out.txt">example-3d · 4 blocks, 3D</option>
+            <optgroup label="compute from a problem">
+              <option value="../examples/example-1.txt">example-1 · 20 blocks</option>
+              <option value="../examples/example-2a.txt">example-2a · 8 blocks</option>
+              <option value="../examples/example-2b.txt">example-2b · 8 blocks</option>
+              <option value="../examples/example-2c.txt">example-2c · 8 blocks</option>
+              <option value="../examples/example-3d.txt">example-3d · 4 blocks, 3D</option>
+            </optgroup>
+          </select>
+        </div>
+        <label id="drop" for="file" style="margin-top: 8px">
+          <strong>or drop a file</strong>
+          an output to draw, a problem to compute
+        </label>
+      </div>
+      <input id="file" type="file" accept=".txt,text/plain" />
+
+      <fieldset>
+        <legend>compute</legend>
+        <div class="split">
+          <label class="check"><input id="invalidate" type="checkbox" /> invalidate cache</label>
+          <span id="server" class="key" data-state="idle">server …</span>
+        </div>
+        <div id="progress" data-state="idle" data-indeterminate="0">
+          <div id="progress-fill"></div>
+        </div>
+        <div id="progress-text" class="key">drop a problem file to compute it</div>
+      </fieldset>
+
+      <div>
+        <div class="split" style="margin-bottom: 6px">
+          <span class="key">block</span><span id="block-count" class="key">0 / 0</span>
+        </div>
+        <input id="block" type="range" min="0" max="0" step="1" value="0" />
+        <div id="ticks" class="ticks"></div>
+        <div class="row" style="margin-top: 8px">
+          <button id="prev" type="button" title="previous block">◀</button>
+          <button id="play" type="button">play</button>
+          <button id="next" type="button" title="next block">▶</button>
+          <button id="reset" type="button" title="reset camera">recenter</button>
+          <button id="record" type="button" title="record the canvas to a video file">record</button>
+        </div>
+      </div>
+
+      <fieldset>
+        <legend>draw</legend>
+        <label class="check"><input id="show-surface" type="checkbox" /> surface</label>
+        <label class="check"><input id="show-line" type="checkbox" /> path (last → first)</label>
+        <label class="check"><input id="show-points" type="checkbox" /> vertices</label>
+        <label class="check"><input id="show-planes" type="checkbox" /> half-space planes</label>
+        <label class="check nested"><input id="facet-only" type="checkbox" /> facet planes only</label>
+        <label class="check"><input id="facet-colors" type="checkbox" /> facet colors (nearest direction)</label>
+      </fieldset>
+
+      <div id="info"></div>
+      <p id="hint"></p>
+      <div id="status"></div>
+    </aside>
+
+    <div id="canvas-host"></div>
+
+    <script src="dist/app.js" defer></script>
+  </body>
+</html>

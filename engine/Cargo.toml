@@ -1,0 +1,23 @@
+[package]
+name = "stable_bridge"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.70"
+description = "Maximal stable bridge of a linear differential game, computed with support functions"
+license = "MIT OR Apache-2.0"
+publish = false
+
+# No dependencies: the original implements its own linear algebra, and pulling in a
+# crate for 6x6 matrices would not simplify anything here.
+
+[[bin]]
+name = "stable_bridge"
+path = "src/main.rs"
+
+[[bin]]
+name = "bridge_server"
+path = "src/server.rs"
+
+[profile.release]
+opt-level = 3
+panic = "abort"
